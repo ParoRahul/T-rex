@@ -1,0 +1,27 @@
+{
+  "name": "trex",
+  "version": "1.0.0",
+  "description": "Type script conversion of t-rex-game ",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "npm run build"
+  },
+  "keywords": [
+    "typescript",
+    "t-rex"
+  ],
+  "author": "Rahul",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^13.1.8",
+    "ts-node": "^8.6.2"
+  },
+  "dependencies": {
+    "@types/bootstrap": "^4.3.1",
+    "@types/jquery": "^3.3.31",
+    "bootstrap": "^4.4.1",
+    "jquery": "^3.4.1"
+  }
+}
