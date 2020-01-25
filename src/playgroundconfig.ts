@@ -20,10 +20,12 @@ export class PlayGroundConfig {
                  public MOBILE_SPEED_COEFFICIENT: number = 1.2,
                  public RESOURCE_TEMPLATE_ID: string = "audio-resources",
                  public SPEED: number = 6,
-                 public SPEED_DROP_COEFFICIENT: number = 3 ) { }
+                 public SPEED_DROP_COEFFICIENT: number = 3,
+                 public DEFAULT_WIDTH: number = 600,
+                 public DEFAULT_HEIGHT: number = 150 ) { }
     
     public updateGravity( value: number ){ this.GRAVITY = value; } 
-    
+
     public updateMIN_JUMP_HEIGHT( value: number ){ this.MIN_JUMP_HEIGHT = value; } 
 
 }

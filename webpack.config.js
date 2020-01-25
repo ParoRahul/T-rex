@@ -53,7 +53,8 @@ var config = {
           }
         : null,
       { test: /\.html$/, loader: 'html-loader' },
-      { test: /\.css$/, loaders: ['style-loader', 'css-loader'] }
+      { test: /\.css$/, loaders: ['style-loader', 'css-loader'] },
+      { test: /\.(png|svg|jpg|gif)$/,use: ['file-loader'] }
     ].filter(Boolean)
   },
   resolve: {

@@ -1,20 +1,21 @@
+import { PlayGroundConfig } from "./playgroundconfig" ;
 import {GameObjectConfig} from "./gameobjectconfig" ;
+import { Canvas } from './canvas';
 
-const enum GameObjectStatus {    CRASHED = 1,
-                              DUCKING = 2,
-                              JUMPING = 3,
-                              RUNNING = 4,
-                              WAITING = 5,
-                         }
+const enum GameObjectStatus {   CRASHED = 1,
+                                DUCKING = 2,
+                                JUMPING = 3,
+                                RUNNING = 4,
+                                WAITING = 5,
+                            }
 
 export class GameObject {
 
-    private static config: GameObjectConfig = new GameObjectConfig();
-    private spritePos: any;
-
     // private msPerFrame :number = 1000 / PlayGround.getsFPS();
+    private minJumpHeight: number;
 
-    constructor( canvas: HTMLCanvasElement ,
+    constructor( canvas: Canvas , private spritePos: any = spritePos,  
+                 private config: GameObjectConfig = new GameObjectConfig(),
                  private xPos: number = 0 , private yPos: number = 0 ,
                  private status: GameObjectStatus = GameObjectStatus.WAITING ,
                  private groundYPos: number = 0 ,
@@ -27,6 +28,13 @@ export class GameObject {
                  private animStartTime: number = 0,
                  private timer: number = 0 ) {
 
+        const playGroundConfig:PlayGroundConfig = new PlayGroundConfig()
+        this.groundYPos = playGroundConfig.DEFAULT_HEIGHT - this.config.HEIGHT -
+                            playGroundConfig.BOTTOM_PAD;
+        this.yPos = this.groundYPos;
+        this.minJumpHeight = this.groundYPos - this.config.MIN_JUMP_HEIGHT;
+        this.draw(0, 0);
+        this.update(0, Trex.status.WAITING);             
     }
 
 }
