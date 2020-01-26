@@ -1,6 +1,8 @@
+import { IS_HIDPI, getTimeStamp } from './utility'
 import { PlayGroundConfig } from "./playgroundconfig" ;
 import { GameObject } from "./gameobject";
 import { Canvas } from './canvas'
+
 
 const enum PlayGroundClass  {
     CANVAS = 'runner-canvas',
@@ -59,24 +61,12 @@ const spriteDefinition = {
 export class PlayGround {
 
     public static getsFPS(): number { return PlayGround.FPS; }
-    public static getRandomNum(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    public static getTimeStamp(): number {
-        return PlayGround.IS_IOS ? new Date().getTime() : performance.now();
-    }
-    private static readonly FPS: number = 60;
-    
-    private static IS_HIDPI: boolean = window.devicePixelRatio > 1;
-    private static IS_IOS: boolean = /iPad|iPhone|iPod/.test(window.navigator.platform);
-    private static IS_MOBILE: boolean = /Android/.test(window.navigator.userAgent) || PlayGround.IS_IOS;
-    private static IS_TOUCH_ENABLED:boolean = 'ontouchstart' in window;
-
+    private static readonly FPS: number = 60;    
     private outerContainer: HTMLElement;
     private container: HTMLDivElement;
     private config: PlayGroundConfig;
     private dimensions: { [key: string]: number };
-    private imageSprite: HTMLImageElement;
+    //private imageSprite: HTMLImageElement;
     private spriteDef: any;
     private distanceMeter: any;
     private msPerFrame: number;
@@ -107,27 +97,40 @@ export class PlayGround {
                                 'WIDTH': this.config.DEFAULT_WIDTH 
                             };
         this.outerContainer = document.querySelector(outerContainerId) as HTMLElement;
-        this.container = document.createElement('div') ;
-        this.container.className = PlayGroundClass.CONTAINER;
-        this.canvas = new Canvas(this.dimensions.WIDTH, this.dimensions.HEIGHT, PlayGroundClass.CANVAS)
-        this.container.appendChild(this.canvas.element)
-        this.outerContainer.appendChild(this.container as HTMLDivElement );
         this.msPerFrame = 1000 / PlayGround.FPS;
         this.currentSpeed = this.config.SPEED;
+        this.loadImages();
+        this.setSpeed();
+        this.container = document.createElement('div') ;
+        this.container.className = PlayGroundClass.CONTAINER;
+        this.canvas = new Canvas(this.dimensions.WIDTH, this.dimensions.HEIGHT, PlayGroundClass.CANVAS);
+        this.canvas.scaleCanvas();
+        this.container.appendChild(this.canvas.element);
+        this.outerContainer.appendChild(this.container as HTMLDivElement );
         this.images = {};
         this.imagesLoaded = 0;
-        this.loadImages();
-        /* this.canvasCtx = this.canvas.getContext('2d'); */
         this.gameObject = new GameObject(this.canvas,this.spriteDef.TREX)
     }
 
     private loadImages(): void {
-        if (PlayGround.IS_HIDPI) {
-            this.imageSprite = <HTMLImageElement>document.getElementById('offline-resources-2x');
+        if (IS_HIDPI) {
+            //this.imageSprite = <HTMLImageElement>document.getElementById('offline-resources-2x');
             this.spriteDef = spriteDefinition.HDPI;
         } else {
-            this.imageSprite = <HTMLImageElement>document.getElementById('offline-resources-1x');
+            //this.imageSprite = <HTMLImageElement>document.getElementById('offline-resources-1x');
             this.spriteDef = spriteDefinition.LDPI;
+        }
+    }
+
+    // Reduce the speed on smaller mobile screens.
+    private setSpeed(value : number = 0 ): void {
+        var speed = value || this.currentSpeed;
+        if (this.dimensions.WIDTH < this.config.DEFAULT_WIDTH) {
+            var mobileSpeed =   speed * this.dimensions.WIDTH / this.config.DEFAULT_WIDTH *
+                                this.config.MOBILE_SPEED_COEFFICIENT;
+            this.currentSpeed = mobileSpeed > speed ? speed : mobileSpeed;
+        } else if (value) {
+            this.currentSpeed = value;
         }
     }
 }
