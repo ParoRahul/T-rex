@@ -1,3 +1,4 @@
+import { Observable,fromEvent} from "rxjs"; 
 import { IS_HIDPI, getTimeStamp } from './utility'
 import { PlayGroundConfig } from "./playgroundconfig" ;
 import { GameObject } from "./gameobject";
@@ -109,7 +110,10 @@ export class PlayGround {
         this.outerContainer.appendChild(this.container as HTMLDivElement );
         this.images = {};
         this.imagesLoaded = 0;
-        this.gameObject = new GameObject(this.canvas,this.spriteDef.TREX)
+        const observable = fromEvent(this.canvas.imageSprite, PlayGroundEvent.LOAD)
+        observable.subscribe(() => {
+            this.gameObject = new GameObject(this.canvas,this.spriteDef.TREX)
+        });  
     }
 
     private loadImages(): void {
