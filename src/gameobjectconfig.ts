@@ -1,4 +1,4 @@
-export  const enum GameObjectStatus {   
+export  const enum GameObjectStatus {
                                 CRASHED = 1,
                                 DUCKING = 2,
                                 JUMPING = 3,
@@ -6,43 +6,43 @@ export  const enum GameObjectStatus {
                                 WAITING = 5,
 }
 
-interface animationObject{
-    frames:number[];
-    msPerFrame:number;
+interface IAnimationObject {
+    frames: number[];
+    msPerFrame: number;
 }
 
-export  const animtionFrames =new Map<GameObjectStatus, animationObject>([
+export  const animtionFrames = new Map<GameObjectStatus, IAnimationObject>([
     [
-        GameObjectStatus.WAITING ,{
+        GameObjectStatus.WAITING , {
             frames: [44, 0],
-            msPerFrame: 1000 / 3
-        }
+            msPerFrame: 1000 / 3,
+        },
     ],
     [
-        GameObjectStatus.RUNNING ,{
+        GameObjectStatus.RUNNING , {
             frames:  [88, 132],
-            msPerFrame: 1000 /12
-        }
+            msPerFrame: 1000 / 12,
+        },
     ],
     [
-        GameObjectStatus.CRASHED ,{
+        GameObjectStatus.CRASHED , {
             frames:  [220],
-            msPerFrame: 1000 / 60
-        }
+            msPerFrame: 1000 / 60,
+        },
     ],
     [
-        GameObjectStatus.JUMPING ,{
+        GameObjectStatus.JUMPING , {
             frames:  [0],
-            msPerFrame: 1000 / 60
-        }
+            msPerFrame: 1000 / 60,
+        },
     ],
     [
         GameObjectStatus.DUCKING, {
             frames: [264, 323],
-            msPerFrame: 1000 / 8
-        }
-    ]
-])
+            msPerFrame: 1000 / 8,
+        },
+    ],
+]);
 
 export class GameObjectConfig {
 
@@ -61,10 +61,10 @@ export class GameObjectConfig {
                  public WIDTH_DUCK: number = 59,
                  public BLINK_TIMING: number = 7000) { }
 
-    set INIITAL_JUMP_VELOCITY(value: number) { this._INIITAL_JUMP_VELOCITY= value; }
-    get INIITAL_JUMP_VELOCITY( ) { return this._INIITAL_JUMP_VELOCITY }   
-    
-    set DROP_VELOCITY(value: number) { this._DROP_VELOCITY= value; }
-    get DROP_VELOCITY( ) { return this._DROP_VELOCITY }   
-    
+    set INIITAL_JUMP_VELOCITY(value: number) { this._INIITAL_JUMP_VELOCITY = value; }
+    get INIITAL_JUMP_VELOCITY( ) { return this._INIITAL_JUMP_VELOCITY; }
+
+    set DROP_VELOCITY(value: number) { this._DROP_VELOCITY = value; }
+    get DROP_VELOCITY( ) { return this._DROP_VELOCITY; }
+
 }

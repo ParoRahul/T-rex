@@ -1,17 +1,16 @@
-import { IS_HIDPI,getTimeStamp } from './utility'
-import { PlayGroundConfig } from "./playgroundconfig" ;
-import { GameObjectStatus,animtionFrames,GameObjectConfig } from "./gameobjectconfig" ;
 import { Canvas } from './canvas';
-
+import { animtionFrames, GameObjectConfig, GameObjectStatus } from './gameobjectconfig' ;
+import { PlayGroundConfig } from './playgroundconfig' ;
+import { getTimeStamp, IS_HIDPI } from './utility';
 
 export class GameObject {
 
-    private msPerFrame :number = 1000 / 60;
+    private msPerFrame: number = 1000 / 60;
     private minJumpHeight: number;
 
-    constructor( private canvas: Canvas , private spritePos:any,  
+    constructor( private canvas: Canvas , private spritePos: any,
                  private config: GameObjectConfig = new GameObjectConfig(),
-                 private playingIntro:boolean = false,
+                 private playingIntro: boolean = false,
                  private xPos: number = 0 , private yPos: number = 0 ,
                  private status: GameObjectStatus = GameObjectStatus.WAITING ,
                  private groundYPos: number = 0 ,
@@ -24,34 +23,33 @@ export class GameObject {
                  private animStartTime: number = 0,
                  private timer: number = 0 ) {
 
-        const playGroundConfig:PlayGroundConfig = new PlayGroundConfig()
+        const playGroundConfig: PlayGroundConfig = new PlayGroundConfig();
         this.groundYPos = playGroundConfig.DEFAULT_HEIGHT - this.config.HEIGHT -
                             playGroundConfig.BOTTOM_PAD;
         this.yPos = this.groundYPos;
         this.minJumpHeight = this.groundYPos - this.config.MIN_JUMP_HEIGHT;
         this.draw(0, 0);
-        this.update(0, GameObjectStatus.WAITING);             
-        console.log(this.canvas.imageSprite); 
+        this.update(0, GameObjectStatus.WAITING);
     }
 
-    get jumping() { return (this.status === GameObjectStatus.JUMPING)? true : false ; }
-    get ducking() { return (this.status === GameObjectStatus.DUCKING)? true : false ; }
-    get crashed() { return (this.status === GameObjectStatus.CRASHED)? true : false ; }
+    get jumping() { return (this.status === GameObjectStatus.JUMPING) ? true : false ; }
+    get ducking() { return (this.status === GameObjectStatus.DUCKING) ? true : false ; }
+    get crashed() { return (this.status === GameObjectStatus.CRASHED) ? true : false ; }
 
-    setJumpVelocity(setting: number): void {
+    public setJumpVelocity(setting: number): void {
         this.config.INIITAL_JUMP_VELOCITY = -setting;
         this.config.DROP_VELOCITY = -setting / 2;
     }
 
-    setBlinkDelay(): void {
+    public setBlinkDelay(): void {
         this.blinkDelay = Math.ceil(Math.random() * this.config.BLINK_TIMING);
     }
 
-    blink(time: number): void {
-        var deltaTime = time - this.animStartTime;
+    public blink(time: number): void {
+        const deltaTime = time - this.animStartTime;
         if (deltaTime >= this.blinkDelay) {
             this.draw(this.currentAnimFrames[this.currentFrame], 0);
-            if (this.currentFrame == 1) {
+            if (this.currentFrame === 1) {
                 // Set new random delay to blink.
                 this.setBlinkDelay();
                 this.animStartTime = time;
@@ -60,7 +58,7 @@ export class GameObject {
         }
     }
 
-    startJump(speed: number ): void {
+    public startJump(speed: number ): void {
         if (!this.jumping) {
             this.update(0, GameObjectStatus.JUMPING);
             this.jumpVelocity = this.config.INIITAL_JUMP_VELOCITY - (speed / 10);
@@ -70,16 +68,16 @@ export class GameObject {
         }
     }
 
-    endJump(): void {
+    public endJump(): void {
         if (this.reachedMinHeight && this.jumpVelocity < this.config.DROP_VELOCITY) {
             this.jumpVelocity = this.config.DROP_VELOCITY;
         }
     }
 
-    updateJump(deltaTime: number, speed: number): void {
-        //var animtionobj = animtionFrames.get(this.status)
-        var msPerFrame = animtionFrames.get(this.status).msPerFrame;
-        var framesElapsed = deltaTime / msPerFrame;
+    public updateJump(deltaTime: number, speed: number): void {
+        // var animtionobj = animtionFrames.get(this.status)
+        const msPerFrame = animtionFrames.get(this.status).msPerFrame;
+        const framesElapsed = deltaTime / msPerFrame;
 
         // Speed drop makes Trex fall faster.
         if (this.speedDrop) {
@@ -109,12 +107,12 @@ export class GameObject {
         this.update(deltaTime);
     }
 
-    setSpeedDrop(): void {
+    public setSpeedDrop(): void {
         this.speedDrop = true;
         this.jumpVelocity = 1;
     }
 
-    setDuck(isDucking:boolean ): void {
+    public setDuck(isDucking: boolean ): void {
         if (isDucking && !this.ducking ) {
             this.update(0, GameObjectStatus.DUCKING);
         } else if (this.ducking) {
@@ -122,7 +120,7 @@ export class GameObject {
         }
     }
 
-    reset(): void {
+    public reset(): void {
         this.yPos = this.groundYPos;
         this.jumpVelocity = 0;
         this.update(0, GameObjectStatus.RUNNING);
@@ -136,9 +134,9 @@ export class GameObject {
         if (status) {
             this.status = status;
             this.currentFrame = 0;
-            this.msPerFrame = animtionFrames.get(status).msPerFrame;;
+            this.msPerFrame = animtionFrames.get(status).msPerFrame;
             this.currentAnimFrames =  animtionFrames.get(status).frames;
-            if (status == GameObjectStatus.WAITING) {
+            if (status === GameObjectStatus.WAITING) {
                 this.animStartTime = getTimeStamp();
                 this.setBlinkDelay();
             }
@@ -148,30 +146,30 @@ export class GameObject {
             this.xPos += Math.round((this.config.START_X_POS /
                 this.config.INTRO_DURATION) * deltaTime);
         }
-        if (this.status == GameObjectStatus.WAITING) {
+        if (this.status === GameObjectStatus.WAITING) {
             this.blink(getTimeStamp());
         } else {
             this.draw(this.currentAnimFrames[this.currentFrame], 0);
         }
         // Update the frame position.
         if (this.timer >= this.msPerFrame) {
-            this.currentFrame = this.currentFrame ==
+            this.currentFrame = this.currentFrame ===
                 this.currentAnimFrames.length - 1 ? 0 : this.currentFrame + 1;
             this.timer = 0;
         }
         // Speed drop becomes duck if the down key is still being pressed.
-        if (this.speedDrop && this.yPos == this.groundYPos) {
+        if (this.speedDrop && this.yPos === this.groundYPos) {
             this.speedDrop = false;
             this.setDuck(true);
         }
     }
 
     private draw(x: number, y: number): void {
-        //console.log('draw called ');
-        var sourceX = x;
-        var sourceY = y;
-        var sourceWidth = (this.ducking && !this.crashed) ? this.config.WIDTH_DUCK : this.config.WIDTH;
-        var sourceHeight = this.config.HEIGHT;
+        // console.log('draw called ');
+        let sourceX = x;
+        let sourceY = y;
+        let sourceWidth = (this.ducking && !this.crashed) ? this.config.WIDTH_DUCK : this.config.WIDTH;
+        let sourceHeight = this.config.HEIGHT;
         if (IS_HIDPI) {
             sourceX *= 2;
             sourceY *= 2;
@@ -187,8 +185,7 @@ export class GameObject {
                 sourceWidth, sourceHeight,
                 this.xPos, this.yPos,
                 this.config.WIDTH_DUCK, this.config.HEIGHT);
-        } 
-        else {
+        } else {
             // Crashed whilst ducking. Trex is standing up so needs adjustment.
             if (this.ducking && this.crashed) {
                 this.xPos++;

@@ -1,9 +1,11 @@
 import { Observable,fromEvent} from "rxjs"; 
-import { IS_HIDPI, getTimeStamp } from './utility'
+import { IS_HIDPI,IDimensions,spriteDefinition } from './utility'
 import { PlayGroundConfig } from "./playgroundconfig" ;
 import { GameObject } from "./gameobject";
-import { Canvas } from './canvas'
-
+import { Canvas } from './canvas';
+import { Cloud } from './cloud';
+import { HorizonLine } from "./horizonline";
+import { Obstacle } from "./obstacle";
 
 const enum PlayGroundClass  {
     CANVAS = 'runner-canvas',
@@ -32,32 +34,6 @@ const enum PlayGroundEvent {
     LOAD = 'load'
 }
 
-const spriteDefinition = {
-    LDPI: {
-        CACTUS_LARGE: { x: 332, y: 2 },
-        CACTUS_SMALL: { x: 228, y: 2 },
-        CLOUD: { x: 86, y: 2 },
-        HORIZON: { x: 2, y: 54 },
-        MOON: { x: 484, y: 2 },
-        PTERODACTYL: { x: 134, y: 2 },
-        RESTART: { x: 2, y: 2 },
-        TEXT_SPRITE: { x: 655, y: 2 },
-        TREX: { x: 848, y: 2 },
-        STAR: { x: 645, y: 2 }
-    },
-    HDPI: {
-        CACTUS_LARGE: { x: 652, y: 2 },
-        CACTUS_SMALL: { x: 446, y: 2 },
-        CLOUD: { x: 166, y: 2 },
-        HORIZON: { x: 2, y: 104 },
-        MOON: { x: 954, y: 2 },
-        PTERODACTYL: { x: 260, y: 2 },
-        RESTART: { x: 2, y: 2 },
-        TEXT_SPRITE: { x: 1294, y: 2 },
-        TREX: { x: 1678, y: 2 },
-        STAR: { x: 1276, y: 2 }
-    }
-};
 
 export class PlayGround {
 
@@ -66,7 +42,7 @@ export class PlayGround {
     private outerContainer: HTMLElement;
     private container: HTMLDivElement;
     private config: PlayGroundConfig;
-    private dimensions: { [key: string]: number };
+    private dimensions: IDimensions;
     //private imageSprite: HTMLImageElement;
     private spriteDef: any;
     private distanceMeter: any;
@@ -83,6 +59,9 @@ export class PlayGround {
     private images: any;
     private imagesLoaded: number;
     private gameObject: GameObject;
+    private horizonLine: HorizonLine;
+    private clouds: Cloud[];
+    private obstacle: Obstacle[];
 
     constructor(private outerContainerId: string, config?: PlayGroundConfig,
                 private time: number = 0, private runningTime: number = 0,
@@ -112,8 +91,9 @@ export class PlayGround {
         this.imagesLoaded = 0;
         const observable = fromEvent(this.canvas.imageSprite, PlayGroundEvent.LOAD)
         observable.subscribe(() => {
-            this.gameObject = new GameObject(this.canvas,this.spriteDef.TREX)
-        });  
+            this.gameObject = new GameObject(this.canvas,this.spriteDef.TREX);
+            this.horizonLine = new HorizonLine(this.canvas,this.spriteDef.HORIZON);
+        });
     }
 
     private loadImages(): void {
