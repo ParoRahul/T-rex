@@ -42,4 +42,7 @@ export function getRandomNum(min: number, max: number): number {
 
 export interface IDimensions { WIDTH: number; HEIGHT: number; }
 export interface IPosition { x: number; y: number; }
-export interface ICollisionBox { x: number; y: number; WIDTH: number; HEIGHT: number; }
+export class CollisionBox {
+
+    constructor( public x: number, public y: number, public WIDTH: number, public HEIGHT: number ) { }
+}

@@ -3,9 +3,12 @@
    "extends": [
        "tslint:recommended"
    ],
-   "rules": {"no-console": false},
+   "rules": { "no-console": false,
+              "quotemark": [true, "single", "avoid-escape"],
+              "variable-name": [true, "check-format", "allow-leading-underscore"]
+            },
    "rulesDirectory": [],
-   "max-classes-per-file": [false, 1],
+   "max-classes-per-file": [false, 5],
    "ordered-imports": false,
    "grouped-imports": false,
    "object-literal-sort-keys": [false]
