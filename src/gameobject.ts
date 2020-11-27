@@ -5,36 +5,37 @@ import { getTimeStamp, IS_HIDPI } from './utility';
 
 export class GameObject {
 
+    get jumping() { return (this.status === GameObjectStatus.JUMPING) ? true : false ; }
+    get ducking() { return (this.status === GameObjectStatus.DUCKING) ? true : false ; }
+    get crashed() { return (this.status === GameObjectStatus.CRASHED) ? true : false ; }
+    public playingIntro: boolean ;
+    public config: GameObjectConfig;
+
     private msPerFrame: number = 1000 / 60;
     private minJumpHeight: number;
 
     constructor( private canvas: Canvas , private spritePos: any,
-                 private config: GameObjectConfig = new GameObjectConfig(),
-                 private playingIntro: boolean = false,
                  private xPos: number = 0 , private yPos: number = 0 ,
                  private status: GameObjectStatus = GameObjectStatus.WAITING ,
                  private groundYPos: number = 0 ,
                  private currentFrame: number = 0,
                  private currentAnimFrames: number[] = [],
                  private blinkCount: number = 0, private blinkDelay: number = 0,
-                 private jumpCount: number = 0, private jumpspotX: number = 0,
+                 public  jumpCount: number = 0, private jumpspotX: number = 0,
                  private jumpVelocity: number = 0, private speedDrop: boolean = false,
                  private reachedMinHeight: boolean = false,
                  private animStartTime: number = 0,
                  private timer: number = 0 ) {
-
+        this.config = new GameObjectConfig();
         const playGroundConfig: PlayGroundConfig = new PlayGroundConfig();
         this.groundYPos = playGroundConfig.DEFAULT_HEIGHT - this.config.HEIGHT -
                             playGroundConfig.BOTTOM_PAD;
         this.yPos = this.groundYPos;
+        this.playingIntro = false;
         this.minJumpHeight = this.groundYPos - this.config.MIN_JUMP_HEIGHT;
         this.draw(0, 0);
         this.update(0, GameObjectStatus.WAITING);
     }
-
-    get jumping() { return (this.status === GameObjectStatus.JUMPING) ? true : false ; }
-    get ducking() { return (this.status === GameObjectStatus.DUCKING) ? true : false ; }
-    get crashed() { return (this.status === GameObjectStatus.CRASHED) ? true : false ; }
 
     public setJumpVelocity(setting: number): void {
         this.config.INIITAL_JUMP_VELOCITY = -setting;
@@ -74,7 +75,7 @@ export class GameObject {
         }
     }
 
-    public updateJump(deltaTime: number, speed: number): void {
+    public updateJump(deltaTime: number, speed?: number): void {
         // var animtionobj = animtionFrames.get(this.status)
         const msPerFrame = animtionFrames.get(this.status).msPerFrame;
         const framesElapsed = deltaTime / msPerFrame;
@@ -128,7 +129,7 @@ export class GameObject {
         this.jumpCount = 0;
     }
 
-    private update(deltaTime: number, status?: GameObjectStatus) {
+    public update(deltaTime: number, status?: GameObjectStatus) {
         this.timer += deltaTime;
         // Update the status.
         if (status) {

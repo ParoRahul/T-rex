@@ -44,5 +44,5 @@ export interface IDimensions { WIDTH: number; HEIGHT: number; }
 export interface IPosition { x: number; y: number; }
 export class CollisionBox {
 
-    constructor( public x: number, public y: number, public WIDTH: number, public HEIGHT: number ) { }
+    constructor( public x: number, public y: number, public width: number, public height: number ) { }
 }
